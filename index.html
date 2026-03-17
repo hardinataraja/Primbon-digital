@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Primbon Digital Nusantara - Weton, Rejeki & Jodoh</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lora:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --jawa-gold: #c5a059;
+            --jawa-dark: #1a0f0a;
+            --jawa-brown: #3e2723;
+            --jawa-cream: #f4eee1;
+        }
+        body {
+            font-family: 'Lora', serif;
+            background-color: var(--jawa-cream);
+            color: var(--jawa-dark);
+            background-image: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
+        }
+        .cinzel { font-family: 'Cinzel', serif; }
+        
+        .card-sakral {
+            background: white;
+            border: 1px solid var(--jawa-gold);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            border-radius: 12px;
+        }
+
+        .btn-primbon {
+            background: linear-gradient(135deg, #4e342e, #261b18);
+            color: var(--jawa-gold);
+            border: 1px solid var(--jawa-gold);
+            transition: all 0.3s ease;
+        }
+
+        .rejeki-bar {
+            background: linear-gradient(to top, var(--jawa-brown), var(--jawa-gold));
+            width: 100%;
+            border-radius: 4px 4px 0 0;
+            transition: height 1s ease-in-out;
+            min-height: 5px;
+        }
+
+        .tab-active {
+            border-bottom: 3px solid var(--jawa-gold);
+            color: var(--jawa-brown);
+            font-weight: bold;
+        }
+
+        @keyframes growUp { from { height: 0; } }
+        .animate-grow { animation: growUp 1s ease-out; }
+
+        .disclaimer-box {
+            background-color: rgba(0,0,0,0.03);
+            border: 1px solid #ddd;
+            color: #666;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body class="min-h-screen pb-10">
+
+    <header class="py-10 text-center bg-[#1a0f0a] text-white border-b-4 border-[#c5a059] relative">
+        <h1 class="cinzel text-3xl md:text-5xl font-bold tracking-widest">PRIMBON NUSANTARA</h1>
+        <p class="italic text-xs tracking-[0.3em] text-[#c5a059] mt-2 uppercase">Edukasi Budaya & Perhitungan Leluhur</p>
+    </header>
+
+    <nav class="flex justify-center bg-white shadow-md sticky top-0 z-50">
+        <button onclick="switchTab('weton')" id="tab-weton" class="px-6 py-4 tab-active uppercase text-xs tracking-widest">Analisis Nasib</button>
+        <button onclick="switchTab('jodoh')" id="tab-jodoh" class="px-6 py-4 uppercase text-xs tracking-widest">Kecocokan Jodoh</button>
+    </nav>
+
+    <main class="container mx-auto px-4 mt-8 max-w-4xl">
+        
+        <!-- BAGIAN 1: WETON & NASIB -->
+        <div id="section-weton">
+            <div class="card-sakral p-6 mb-8 border-t-4 border-[#c5a059]">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
+                    <div>
+                        <label class="block text-xs font-bold mb-2 uppercase tracking-tighter">Nama Anda:</label>
+                        <input type="text" id="namaDiri" placeholder="Nama Anda" class="w-full p-3 border rounded bg-gray-50 focus:ring-2 focus:ring-[#c5a059] outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-2 uppercase tracking-tighter">Tanggal Lahir:</label>
+                        <input type="date" id="tglLahir" class="w-full p-3 border rounded bg-gray-50 focus:ring-2 focus:ring-[#c5a059] outline-none">
+                    </div>
+                </div>
+                <button onclick="hitungLengkap()" class="btn-primbon w-full mt-6 py-4 rounded-lg font-bold tracking-widest uppercase">Buka Tabir Nasib</button>
+            </div>
+
+            <div id="resultWeton" class="hidden space-y-6"></div>
+        </div>
+
+        <!-- BAGIAN 2: KECOCOKAN JODOH -->
+        <div id="section-jodoh" class="hidden">
+            <div class="card-sakral p-6 mb-8 border-t-4 border-[#c5a059]">
+                <h3 class="cinzel text-xl font-bold mb-6 text-center uppercase">Penyatuan Dua Jiwa</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold uppercase text-center border-b pb-1">Pihak Pria</p>
+                        <input type="text" id="namaPria" placeholder="Nama Pria" class="w-full p-2 border-b outline-none text-center bg-transparent">
+                        <input type="date" id="tglPria" class="w-full p-2 border rounded">
+                    </div>
+                    <div class="space-y-3">
+                        <p class="text-xs font-bold uppercase text-center border-b pb-1">Pihak Wanita</p>
+                        <input type="text" id="namaWanita" placeholder="Nama Wanita" class="w-full p-2 border-b outline-none text-center bg-transparent">
+                        <input type="date" id="tglWanita" class="w-full p-2 border rounded">
+                    </div>
+                </div>
+                <button onclick="hitungJodoh()" class="btn-primbon w-full mt-8 py-4 rounded-lg font-bold tracking-widest uppercase">Cek Keselarasan Jodoh</button>
+            </div>
+
+            <div id="resultJodoh" class="hidden space-y-6"></div>
+        </div>
+
+        <!-- DISCLAIMER -->
+        <div class="mt-12 disclaimer-box p-6 rounded-lg text-justify opacity-80">
+            <h5 class="font-bold mb-2 text-center uppercase tracking-widest text-[0.8rem]">Pernyataan & Disclaimer</h5>
+            <p class="mb-2">Aplikasi ini adalah digitalisasi literatur Primbon Jawa sebagai upaya pelestarian budaya. Hasil yang ditampilkan bersifat interpretatif berdasarkan perhitungan tradisional (metode pembagian 8 untuk jodoh dan Pal Srigati untuk rejeki).</p>
+            <p>Kehidupan dan takdir sepenuhnya adalah rahasia Tuhan. Gunakan hasil ini dengan bijaksana, sebagai sarana edukasi budaya atau motivasi diri untuk lebih mawas diri dalam melangkah.</p>
+        </div>
+
+    </main>
+
+    <script>
+        const HARI = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
+        const PASARAN = ["Legi", "Paing", "Pon", "Wage", "Kliwon"];
+        const NEPTU_HARI = { "Minggu": 5, "Senin": 4, "Selasa": 3, "Rabu": 7, "Kamis": 8, "Jumat": 6, "Sabtu": 9 };
+        const NEPTU_PASARAN = { "Legi": 5, "Paing": 9, "Pon": 7, "Wage": 4, "Kliwon": 8 };
+
+        const KARAKTER_HARI = {
+            "Minggu": "Berwibawa, mandiri, dan sangat protektif terhadap orang tersayang.",
+            "Senin": "Berjiwa sosial tinggi, ramah, namun terkadang mudah terbawa perasaan.",
+            "Selasa": "Pemberani, energik, berpendirian teguh tapi terkadang keras kepala.",
+            "Rabu": "Sopan, pandai berkomunikasi, dan memiliki pemikiran strategis.",
+            "Kamis": "Pekerja keras, ambisius, dan memiliki rasa ingin tahu yang tinggi.",
+            "Jumat": "Tenang, menyukai kebersihan, namun sulit menerima kritik mendadak.",
+            "Sabtu": "Sabar, teliti, mandiri, dan cenderung memiliki pemikiran yang mendalam."
+        };
+
+        const KARAKTER_PASARAN = {
+            "Legi": "Cerdas dan optimis. Memiliki banyak ide namun terkadang kurang fokus.",
+            "Paing": "Ambisius dan berwibawa. Suka menolong namun memiliki emosi yang cukup kuat.",
+            "Pon": "Berjiwa pemimpin, pandai berargumen, dan teliti dalam pengelolaan materi.",
+            "Wage": "Tangguh dan pekerja keras. Pandai mencari celah rejeki namun terkadang agak kaku.",
+            "Kliwon": "Berjiwa seni, tutur kata manis, dan mudah bergaul dengan siapa saja."
+        };
+
+        const HASIL_JODOH = {
+            1: { nama: "PEGAT", status: "Waspada", desc: "Artinya 'Terputus'. Dalam literatur Primbon, hasil ini mengindikasikan adanya potensi ujian di masa depan, baik berupa masalah ekonomi, perbedaan prinsip yang tajam, hingga campur tangan orang ketiga. Pasangan ini disarankan untuk lebih banyak berkomunikasi secara terbuka, bersabar, dan memperbanyak doa/sedekah sebagai tolak bala agar hubungan tetap utuh." },
+            2: { nama: "RATU", status: "Sangat Baik", desc: "Artinya 'Raja/Ratu'. Pasangan ini dianggap sangat serasi dan sudah jodohnya. Dalam kehidupan bermasyarakat, mereka akan sangat disegani dan dihormati. Rejeki diprediksi akan mengalir lancar dan keharmonisan rumah tangga terjaga dengan sangat baik hingga hari tua." },
+            3: { nama: "JODOH", status: "Sangat Baik", desc: "Tingkat kecocokan yang paling ideal. Pasangan ini akan mampu saling menerima segala kelebihan dan kekurangan masing-masing dengan ikhlas. Kehidupan rumah tangga umumnya berjalan rukun, damai, dan minim hambatan besar karena adanya kesamaan visi hidup." },
+            4: { nama: "TOPO", status: "Cukup (Berproses)", desc: "Artinya 'Prihatin'. Di awal masa pernikahan, pasangan ini diprediksi akan mengalami masa-masa sulit, terutama dalam hal ekonomi atau penyesuaian karakter. Namun, jika mereka mampu bertahan dan bekerja keras bersama, pada akhirnya kehidupan mereka akan berakhir sukses dan bahagia luar biasa." },
+            5: { nama: "TINARI", status: "Banyak Rejeki", desc: "Kabar sangat baik bagi pasangan ini. Tinari melambangkan kemudahan dalam mencari nafkah dan kebahagiaan. Pasangan ini diramalkan tidak akan kekurangan materi dan sering mendapatkan keberuntungan yang tidak terduga dalam perjalanan hidupnya." },
+            6: { nama: "PADU", status: "Waspada (Cekcok)", desc: "Artinya 'Bertengkar'. Pasangan ini diprediksi akan sering mengalami selisih pendapat atau adu argumen untuk hal-hal sepele. Meski sering bertengkar, biasanya masalah tidak berujung pada perpisahan asalkan ego masing-masing bisa diredam." },
+            7: { nama: "SUJANAN", status: "Bahaya", desc: "Artinya 'Kecurigaan'. Rumah tangga ini berisiko diwarnai oleh rasa cemburu yang tinggi, keributan kecil yang membesar, hingga potensi perselingkuhan. Perlu fondasi kepercayaan yang sangat kuat dan kejujuran mutlak untuk menjalankan hubungan ini." },
+            0: { nama: "PESTHI", status: "Sangat Baik (Stabil)", desc: "Artinya 'Pasti/Tentu'. Pasangan ini akan hidup sangat stabil, adem ayem, dan rukun. Meskipun ada masalah eksternal, mereka selalu solid secara internal. Keharmonisan mereka sulit dipisahkan dan umumnya membawa kedamaian bagi orang di sekitarnya." }
+        };
+
+        function switchTab(tab) {
+            document.getElementById('section-weton').classList.toggle('hidden', tab !== 'weton');
+            document.getElementById('section-jodoh').classList.toggle('hidden', tab !== 'jodoh');
+            document.getElementById('tab-weton').className = tab === 'weton' ? 'px-6 py-4 tab-active uppercase text-xs tracking-widest' : 'px-6 py-4 uppercase text-xs tracking-widest';
+            document.getElementById('tab-jodoh').className = tab === 'jodoh' ? 'px-6 py-4 tab-active uppercase text-xs tracking-widest' : 'px-6 py-4 uppercase text-xs tracking-widest';
+        }
+
+        function getWetonInfo(dateStr) {
+            if (!dateStr) return null;
+            const date = new Date(dateStr);
+            const dayName = HARI[date.getDay()];
+            const baseDate = new Date("1900-01-01"); 
+            const diffDays = Math.ceil(Math.abs(date - baseDate) / (1000 * 60 * 60 * 24));
+            const pasaranName = PASARAN[(diffDays + 1) % 5];
+            const neptuTotal = NEPTU_HARI[dayName] + NEPTU_PASARAN[pasaranName];
+            
+            const arah = ["Utara", "Timur", "Selatan", "Barat"][neptuTotal % 4];
+            const naas = `${HARI[(date.getDay() + 3) % 7]} ${PASARAN[(diffDays + 4) % 5]}`;
+
+            return { dayName, pasaranName, neptuTotal, arah, naas, karakter: `${KARAKTER_HARI[dayName]} ${KARAKTER_PASARAN[pasaranName]}` };
+        }
+
+        function generateSrigati(neptu) {
+            let base = (neptu % 9) || 9;
+            let results = [];
+            for(let i=0; i<10; i++) {
+                let val = (base + (i * 2)) % 10;
+                results.push(val === 0 ? 1 : val);
+            }
+            return results;
+        }
+
+        function hitungLengkap() {
+            const nama = document.getElementById('namaDiri').value || "Seseorang";
+            const tgl = document.getElementById('tglLahir').value;
+            if(!tgl) return;
+
+            const w = getWetonInfo(tgl);
+            const siklus = generateSrigati(w.neptuTotal);
+            const res = document.getElementById('resultWeton');
+            res.classList.remove('hidden');
+
+            res.innerHTML = `
+                <div class="card-sakral p-8 border-l-8 border-[#c5a059] animate-grow">
+                    <h4 class="text-xs uppercase text-gray-400 font-bold mb-1 tracking-widest">Profil Kebatinan</h4>
+                    <h2 class="cinzel text-3xl font-bold mb-4">${nama}</h2>
+                    <div class="flex gap-4 mb-6">
+                        <span class="bg-[#1a0f0a] text-white px-4 py-1 rounded-full text-sm font-bold">${w.dayName} ${w.pasaranName}</span>
+                        <span class="border border-[#c5a059] text-[#c5a059] px-4 py-1 rounded-full text-sm font-bold">Neptu ${w.neptuTotal}</span>
+                    </div>
+                    <div class="bg-amber-50 p-4 rounded-lg italic text-gray-700 leading-relaxed border border-amber-100">
+                        <strong>Karakter Anda:</strong> "${w.karakter}"
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="card-sakral p-6 bg-[#3e2723] text-white">
+                        <p class="text-xs uppercase opacity-70 mb-1">Arah Mencari Rejeki</p>
+                        <h4 class="text-2xl font-bold cinzel">${w.arah}</h4>
+                        <p class="text-[10px] mt-2 opacity-50 italic">Gunakan arah ini sebagai referensi saat memulai urusan penting.</p>
+                    </div>
+                    <div class="card-sakral p-6 border-red-200">
+                        <p class="text-xs uppercase text-red-400 font-bold mb-1">Hari Naas (Waspada)</p>
+                        <h4 class="text-2xl font-bold cinzel text-red-600">${w.naas}</h4>
+                        <p class="text-[10px] mt-2 text-gray-400 italic">Disarankan untuk lebih mawas diri dan berdoa di hari ini.</p>
+                    </div>
+                </div>
+
+                <div class="card-sakral p-8">
+                    <h4 class="cinzel text-xl font-bold mb-2 text-center">Grafik Siklus Peruntungan (Pal Srigati)</h4>
+                    <p class="text-[11px] text-gray-500 text-center mb-8 uppercase tracking-widest">Analisis Keberuntungan per 6 Tahun Usia</p>
+                    <div class="flex items-end justify-between h-56 gap-2 border-b-2 border-gray-100 px-2">
+                        ${siklus.map((val, idx) => `
+                            <div class="flex-1 flex flex-col items-center group">
+                                <div class="relative w-full flex justify-center">
+                                    <div class="rejeki-bar animate-grow shadow-lg" style="height: ${val * 22}px">
+                                        <div class="absolute -top-6 left-0 right-0 text-center text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity">Level ${val}</div>
+                                    </div>
+                                </div>
+                                <span class="text-[9px] md:text-[10px] mt-3 font-bold text-gray-400">${idx * 6}th</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="text-[11px] p-3 border-r border-gray-100">
+                            <span class="font-bold text-green-600 block mb-1 uppercase">Nilai 7-9</span>
+                            Masa keemasan. Rejeki lancar dan banyak kemudahan dalam hidup.
+                        </div>
+                        <div class="text-[11px] p-3 border-r border-gray-100">
+                            <span class="font-bold text-amber-600 block mb-1 uppercase">Nilai 4-6</span>
+                            Kondisi stabil. Rejeki mencukupi, disarankan menjaga yang sudah ada.
+                        </div>
+                        <div class="text-[11px] p-3">
+                            <span class="font-bold text-red-600 block mb-1 uppercase">Nilai 1-3</span>
+                            Masa prihatin. Perbanyak ikhtiar batin, doa, dan kesabaran ekstra.
+                        </div>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => { res.scrollIntoView({ behavior: 'smooth' }); }, 100);
+        }
+
+        function hitungJodoh() {
+            const nP = document.getElementById('namaPria').value || "Pria";
+            const nW = document.getElementById('namaWanita').value || "Wanita";
+            const tP = document.getElementById('tglPria').value;
+            const tW = document.getElementById('tglWanita').value;
+
+            if(!tP || !tW) return;
+
+            const w1 = getWetonInfo(tP);
+            const w2 = getWetonInfo(tW);
+            const total = w1.neptuTotal + w2.neptuTotal;
+            const sisa = total % 8;
+            const resJ = HASIL_JODOH[sisa];
+
+            const resDiv = document.getElementById('resultJodoh');
+            resDiv.classList.remove('hidden');
+
+            resDiv.innerHTML = `
+                <div class="card-sakral p-8 border-t-8 border-[#c5a059] animate-grow">
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4 border-b pb-6">
+                        <div class="text-center">
+                            <p class="text-xs text-gray-400 uppercase font-bold">${nP}</p>
+                            <h5 class="text-lg font-bold">${w1.dayName} ${w1.pasaranName}</h5>
+                            <span class="text-sm font-bold text-[#c5a059]">Neptu ${w1.neptuTotal}</span>
+                        </div>
+                        <div class="text-4xl font-serif text-gray-200">&</div>
+                        <div class="text-center">
+                            <p class="text-xs text-gray-400 uppercase font-bold">${nW}</p>
+                            <h5 class="text-lg font-bold">${w2.dayName} ${w2.pasaranName}</h5>
+                            <span class="text-sm font-bold text-[#c5a059]">Neptu ${w2.neptuTotal}</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-[#1a0f0a] text-white p-6 rounded-xl text-center shadow-xl">
+                        <p class="text-xs tracking-[0.3em] uppercase mb-1 text-[#c5a059]">Hasil Penyatuan (Neptu ${total})</p>
+                        <h3 class="cinzel text-5xl font-black mb-4 tracking-tighter">${resJ.nama}</h3>
+                        <div class="inline-block px-4 py-1 border border-[#c5a059] text-[#c5a059] rounded-full text-xs font-bold mb-4">
+                            Status: ${resJ.status}
+                        </div>
+                        <p class="text-gray-300 italic text-lg leading-relaxed mt-2 border-t border-gray-800 pt-4">
+                            "${resJ.desc}"
+                        </p>
+                    </div>
+
+                    <div class="mt-8 p-4 bg-amber-50 rounded-lg text-xs text-amber-800 border border-amber-200 text-center">
+                        <strong>Catatan Budaya:</strong> Jika hasil kurang baik, orang tua zaman dahulu biasanya menyarankan sedekah nasi tumpeng atau melakukan doa tolak bala untuk menyelaraskan energi negatif.
+                    </div>
+                </div>
+            `;
+            setTimeout(() => { resDiv.scrollIntoView({ behavior: 'smooth' }); }, 100);
+        }
+
+        window.onload = () => {
+            document.getElementById('tglLahir').value = "1995-05-15";
+            document.getElementById('tglPria').value = "1995-05-15";
+            document.getElementById('tglWanita').value = "1997-08-20";
+        }
+    </script>
+</body>
+</html>
+
